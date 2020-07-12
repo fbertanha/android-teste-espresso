@@ -31,7 +31,12 @@ public class ListaLeilaoTelaTest {
 
     @Test
     public void deve_AparecerUmLeilao_QuandoCarregarUmLeilaoNaApi() throws IOException {
-        Leilao leilao = new LeilaoWebClient().salva(new Leilao("Carro"));
+        LeilaoWebClient webClient = new LeilaoWebClient();
+
+        if (!webClient.limpaBancoDeDados()) {
+            Assert.fail("Banco de Dados não foi limpo");
+        }
+        Leilao leilao = webClient.salva(new Leilao("Carro"));
 
         if (leilao == null) {
             Assert.fail("Leilão não foi salvo");
