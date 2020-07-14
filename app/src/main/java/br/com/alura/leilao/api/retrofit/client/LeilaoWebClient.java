@@ -11,7 +11,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LeilaoWebClient {
+public class LeilaoWebClient extends WebClient {
 
     private final LeilaoService service;
 
@@ -53,22 +53,4 @@ public class LeilaoWebClient {
         });
     }
 
-    private <T> boolean temDados(Response<T> response) {
-        return response.isSuccessful() && response.body() != null;
-    }
-
-    public Leilao salva(Leilao leilao) throws IOException {
-        Call<Leilao> call = service.salva(leilao);
-        Response<Leilao> response = call.execute();
-
-        return temDados(response) ? response.body() : null;
-    }
-
-    public boolean limpaBancoDeDados() throws IOException {
-        Call<Void> call = service.limpaBancoDeDados();
-
-        Response<Void> execute = call.execute();
-
-        return execute.isSuccessful();
-    }
 }
