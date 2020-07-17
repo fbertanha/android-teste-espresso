@@ -29,12 +29,11 @@ public class ListaLeilaoTelaTest {
     @Test
     public void deve_AparecerUmLeilao_QuandoCarregarUmLeilaoNaApi() throws IOException {
 
-        TesteWebClient webClient = new TesteWebClient();
-        if (!webClient.limpaBancoDeDados()) {
+        TesteWebClient carroSalvo = new TesteWebClient();
+        if (!carroSalvo.limpaBancoDeDados()) {
             Assert.fail("Banco de Dados não foi limpo");
         }
-        Leilao leilao = webClient.salva(new Leilao("Carro"));
-
+        Leilao leilao = carroSalvo.salva(new Leilao("Carro"));
         if (leilao == null) {
             Assert.fail("Leilão não foi salvo");
         }
@@ -43,5 +42,27 @@ public class ListaLeilaoTelaTest {
 
         onView(withText("Carro"))
                 .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void deve_AparecerDoisLeiloes_QuandoCarregarDoisLeiloesDaApi() throws IOException {
+        TesteWebClient webClient = new TesteWebClient();
+        if (!webClient.limpaBancoDeDados()) {
+            Assert.fail("Banco de Dados não foi limpo");
+        }
+        Leilao carroSalvo = webClient.salva(new Leilao("Carro"));
+        Leilao computadorSalvo = webClient.salva(new Leilao("Computador"));
+        if (carroSalvo == null || computadorSalvo == null) {
+            Assert.fail("Leilão não foi salvo");
+        }
+
+        activity.launchActivity(new Intent());
+
+        onView(withText("Carro"))
+                .check(matches(isDisplayed()));
+
+        onView(withText("Computador"))
+                .check(matches(isDisplayed()));
+
     }
 }
