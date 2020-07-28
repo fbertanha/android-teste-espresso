@@ -11,13 +11,16 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import br.com.alura.leilao.R;
 import br.com.alura.leilao.api.retrofit.service.TesteWebClient;
 import br.com.alura.leilao.model.Leilao;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by felipebertanha on 06/July/2020
@@ -43,7 +46,7 @@ public class ListaLeilaoTelaTest {
 
         activity.launchActivity(new Intent());
 
-        onView(withText("Carro"))
+        onView(allOf(withText("Carro"), withId(R.id.item_leilao_descricao)))
                 .check(matches(isDisplayed()));
     }
 
@@ -55,10 +58,10 @@ public class ListaLeilaoTelaTest {
 
         activity.launchActivity(new Intent());
 
-        onView(withText("Carro"))
+        onView(allOf(withText("Carro"), withId(R.id.item_leilao_descricao)))
                 .check(matches(isDisplayed()));
 
-        onView(withText("Computador"))
+        onView(allOf(withText("Computador"), withId(R.id.item_leilao_descricao)))
                 .check(matches(isDisplayed()));
 
     }
