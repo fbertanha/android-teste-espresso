@@ -11,6 +11,8 @@ import org.hamcrest.Matcher;
 import br.com.alura.leilao.R;
 import br.com.alura.leilao.formatter.FormatadorDeMoeda;
 
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+
 /**
  * Created by felipebertanha on 24/August/2020
  */
@@ -24,6 +26,9 @@ public class ViewMatcher {
         final String maiorLanceFormatado = formatador.formata(maiorLanceEsperado);
 
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
+
+            private Matcher<View> displayed = isDisplayed();
+
             @Override
             public void describeTo(Description description) {
                 description.appendText("View com descrição")
@@ -31,7 +36,9 @@ public class ViewMatcher {
                         .appendText(", maior lance ")
                         .appendValue(maiorLanceFormatado)
                         .appendText(" na posição ")
-                        .appendValue(position);
+                        .appendValue(position)
+                        .appendText(" ")
+                        .appendDescriptionOf(displayed);
             }
 
             @Override
@@ -48,7 +55,9 @@ public class ViewMatcher {
 
                 boolean temMaiorLanceEsperado = verificaMaiorLanceEsperado(view);
 
-                return temDescricaoEsperada && temMaiorLanceEsperado;
+                return temDescricaoEsperada
+                        && temMaiorLanceEsperado
+                        && displayed.matches(view);
             }
 
             private boolean verificaMaiorLanceEsperado(View view) {
