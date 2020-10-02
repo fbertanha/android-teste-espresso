@@ -27,7 +27,7 @@ public class ViewMatcher {
 
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
 
-            private Matcher<View> displayed = isDisplayed();
+            final private Matcher<View> displayed = isDisplayed();
 
             @Override
             public void describeTo(Description description) {
@@ -51,23 +51,25 @@ public class ViewMatcher {
 
                 View view = viewHolder.itemView;
 
-                boolean temDescricaoEsperada = verificaDescricaoEsperada(view);
+                boolean temDescricaoEsperada = apareceDescricaoEsperada(view);
 
-                boolean temMaiorLanceEsperado = verificaMaiorLanceEsperado(view);
+                boolean temMaiorLanceEsperado = apareceMaiorLanceEsperado(view);
 
                 return temDescricaoEsperada
                         && temMaiorLanceEsperado
                         && displayed.matches(view);
             }
 
-            private boolean verificaMaiorLanceEsperado(View view) {
+            private boolean apareceMaiorLanceEsperado(View view) {
                 TextView textViewMaiorLance = view.findViewById(R.id.item_leilao_maior_lance);
-                return textViewMaiorLance.getText().toString().equals(maiorLanceFormatado);
+                return textViewMaiorLance.getText().toString().equals(maiorLanceFormatado)
+                        && displayed.matches(textViewMaiorLance);
             }
 
-            private boolean verificaDescricaoEsperada(View view) {
+            private boolean apareceDescricaoEsperada(View view) {
                 TextView textViewDescricao = view.findViewById(R.id.item_leilao_descricao);
-                return textViewDescricao.getText().toString().equals(descricaoEsperada);
+                return textViewDescricao.getText().toString().equals(descricaoEsperada)
+                        && displayed.matches(textViewDescricao);
             }
         };
     }
