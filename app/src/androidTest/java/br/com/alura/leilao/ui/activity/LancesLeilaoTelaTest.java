@@ -15,11 +15,17 @@ import br.com.alura.leilao.R;
 import br.com.alura.leilao.model.Leilao;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by felipebertanha on 13/October/2020
@@ -66,25 +72,49 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
                 .perform(click());
 
         //Clica no Fab tela de lista de usuarios
+        onView(withId(R.id.lista_usuario_fab_adiciona))
+                .perform(click());
 
-        //Clica no EditText e preenche com o nome do usuario
+        //Clica no EditText nome
+        onView(withId(R.id.form_usuario_nome))
+                .perform(click());
+
+        //Preenche com o nome do usuario
+        onView(withId(R.id.form_usuario_nome_editText))
+                .perform(replaceText("Felipe Bertanha"),
+                        closeSoftKeyboard());
 
         //Clica em "Adicionar"
+        onView(allOf(withId(android.R.id.button1),
+                withText("Adicionar"),
+                isDisplayed()))
+                .perform(scrollTo(), click());
 
         //Clica no back do Android
+        pressBack();
 
         //Clica no fab lances do leilao
+        onView(withId(R.id.lances_leilao_fab_adiciona))
+                .perform(click());
 
         //Verifica visibilidade do dialog com o titulo esperado "Novo lance"
+        onView(withText("Novo lance"))
+                .check(matches(isDisplayed()));
 
         //Clica no EditText de valor e preenche
+        onView(withId(R.id.form_lance_valor_edittext))
+                .perform(click(),
+                        typeText("200"),
+                        closeSoftKeyboard());
 
         //Seleciona usuário
+        onView(withId(R.id.form_lance_usuario))
+                .perform(click());
 
         //Clica no botao propor
 
         //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
-        
+
 
     }
 }
