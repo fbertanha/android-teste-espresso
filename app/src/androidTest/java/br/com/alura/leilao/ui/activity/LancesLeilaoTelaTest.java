@@ -12,8 +12,11 @@ import java.io.IOException;
 
 import br.com.alura.leilao.BaseTesteIntegracao;
 import br.com.alura.leilao.R;
+import br.com.alura.leilao.formatter.FormatadorDeMoeda;
 import br.com.alura.leilao.model.Leilao;
+import br.com.alura.leilao.model.Usuario;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -22,10 +25,12 @@ import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by felipebertanha on 13/October/2020
@@ -111,10 +116,27 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
         onView(withId(R.id.form_lance_usuario))
                 .perform(click());
 
+        onData(is(new Usuario(1, "Felipe Bertanha")))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+
         //Clica no botao propor
+        onView(withText("Propor"))
+                .perform(click());
 
         //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
+        FormatadorDeMoeda formatador = new FormatadorDeMoeda();
+        onView(withId(R.id.lances_leilao_maior_lance))
+                .check(matches(allOf(withText(formatador.formata(200)),
+                        isDisplayed())));
 
+        onView(withId(R.id.lances_leilao_menor_lance))
+                .check(matches(allOf(withText(formatador.formata(200)),
+                        isDisplayed())));
+
+        onView(withId(R.id.lances_leilao_maiores_lances))
+                .check(matches(allOf(withText("200.0 - (1) Felipe Bertanha\n"),
+                        isDisplayed())));
 
     }
 }
