@@ -21,7 +21,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -51,77 +50,75 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
 
     @Test
     public void deve_AtualizarLancesDoLeilao_QuandoReceberUmLance() throws IOException {
-        //salvar leilao na api
         tentaSalvarLeilaoNaApi(new Leilao("Carrp"));
 
-        //Inicializar a Main Activity
         mainActivity.launchActivity(new Intent());
 
-        //Clica no leilao
         onView(withId(R.id.lista_leilao_recyclerview))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        //Clica no Fab da tela de lances do Leilao
-        onView(withId(R.id.lances_leilao_fab_adiciona))
+        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
+                isDisplayed()))
                 .perform(click());
 
-        //Verificar titulo e msg do modal de usuario nao cadastrado
-        onView(withText("Usuários não encontrados"))
+        onView(allOf(withId(R.id.alertTitle),
+                withText("Usuários não encontrados"),
+                isDisplayed()))
                 .check(matches(isDisplayed()));
 
-        onView(withText("Não existe usuários cadastrados! Cadastre um usuário para propor o lance."))
+        onView(allOf(withId(android.R.id.message),
+                withText("Não existe usuários cadastrados! Cadastre um usuário para propor o lance."),
+                isDisplayed()))
                 .check(matches(isDisplayed()));
 
-        //Clica no botao "Cadastrar Usuário"
-        onView(withText("Cadastrar usuário"))
+        onView(allOf(withId(android.R.id.button1),
+                withText("Cadastrar usuário"),
+                isDisplayed()))
                 .perform(click());
 
-        //Clica no Fab tela de lista de usuarios
-        onView(withId(R.id.lista_usuario_fab_adiciona))
+        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
+                isDisplayed()))
                 .perform(click());
 
-        //Clica no EditText nome
-        onView(withId(R.id.form_usuario_nome))
-                .perform(click());
-
-        //Preenche com o nome do usuario
-        onView(withId(R.id.form_usuario_nome_editText))
-                .perform(replaceText("Felipe Bertanha"),
+        onView(allOf(withId(R.id.form_usuario_nome_editText),
+                isDisplayed()))
+                .perform(click(),
+                        typeText("Felipe Bertanha"),
                         closeSoftKeyboard());
 
-        //Clica em "Adicionar"
         onView(allOf(withId(android.R.id.button1),
                 withText("Adicionar"),
                 isDisplayed()))
                 .perform(scrollTo(), click());
 
-        //Clica no back do Android
         pressBack();
 
-        //Clica no fab lances do leilao
-        onView(withId(R.id.lances_leilao_fab_adiciona))
+        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
+                isDisplayed()))
                 .perform(click());
 
-        //Verifica visibilidade do dialog com o titulo esperado "Novo lance"
-        onView(withText("Novo lance"))
+        onView(allOf(withId(R.id.alertTitle),
+                withText("Novo lance"),
+                isDisplayed()))
                 .check(matches(isDisplayed()));
 
-        //Clica no EditText de valor e preenche
-        onView(withId(R.id.form_lance_valor_edittext))
+        onView(allOf(withId(R.id.form_lance_valor_edittext),
+                isDisplayed()))
                 .perform(click(),
                         typeText("200"),
                         closeSoftKeyboard());
 
-        //Seleciona usuário
-        onView(withId(R.id.form_lance_usuario))
+        onView(allOf(withId(R.id.form_lance_usuario),
+                isDisplayed()))
                 .perform(click());
 
         onData(is(new Usuario(1, "Felipe Bertanha")))
                 .inRoot(isPlatformPopup())
                 .perform(click());
 
-        //Clica no botao propor
-        onView(withText("Propor"))
+        onView(allOf(withId(android.R.id.button1),
+                withText("Propor"),
+                isDisplayed()))
                 .perform(click());
 
         //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
