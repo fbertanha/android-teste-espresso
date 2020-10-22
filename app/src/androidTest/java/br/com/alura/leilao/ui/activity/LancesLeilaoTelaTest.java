@@ -1,9 +1,12 @@
 package br.com.alura.leilao.ui.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,6 +15,7 @@ import java.io.IOException;
 
 import br.com.alura.leilao.BaseTesteIntegracao;
 import br.com.alura.leilao.R;
+import br.com.alura.leilao.database.dao.UsuarioDAO;
 import br.com.alura.leilao.formatter.FormatadorDeMoeda;
 import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.model.Usuario;
@@ -93,33 +97,7 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
 
         pressBack();
 
-        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.alertTitle),
-                withText("Novo lance"),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(R.id.form_lance_valor_edittext),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("200"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(R.id.form_lance_usuario),
-                isDisplayed()))
-                .perform(click());
-
-        onData(is(new Usuario(1, "Felipe Bertanha")))
-                .inRoot(isPlatformPopup())
-                .perform(click());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Propor"),
-                isDisplayed()))
-                .perform(click());
+        propoeNovoLance("200", 1, "Felipe Bertanha");
 
         //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
         FormatadorDeMoeda formatador = new FormatadorDeMoeda();
@@ -141,148 +119,72 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
     public void deve_AtualizarLancesDoLeilao_QuandoReceberTresLances() throws IOException {
         tentaSalvarLeilaoNaApi(new Leilao("Carro"));
 
+        tentaSalvarUsuariosNoBancoDeDadosLocal(new Usuario("Felipe"), new Usuario("Evelyn"));
+
         mainActivity.launchActivity(new Intent());
 
         onView(withId(R.id.lista_leilao_recyclerview))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.alertTitle),
-                withText("Usuários não encontrados"),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(android.R.id.message),
-                withText("Não existe usuários cadastrados! Cadastre um usuário para propor o lance."),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Cadastrar usuário"),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.form_usuario_nome_editText),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("Felipe"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Adicionar"),
-                isDisplayed()))
-                .perform(scrollTo(), click());
-
-        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.form_usuario_nome_editText),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("Evelyn"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Adicionar"),
-                isDisplayed()))
-                .perform(scrollTo(), click());
-
-        pressBack();
+//        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
+//                isDisplayed()))
+//                .perform(click());
+//
+//        onView(allOf(withId(R.id.alertTitle),
+//                withText("Usuários não encontrados"),
+//                isDisplayed()))
+//                .check(matches(isDisplayed()));
+//
+//        onView(allOf(withId(android.R.id.message),
+//                withText("Não existe usuários cadastrados! Cadastre um usuário para propor o lance."),
+//                isDisplayed()))
+//                .check(matches(isDisplayed()));
+//
+//        onView(allOf(withId(android.R.id.button1),
+//                withText("Cadastrar usuário"),
+//                isDisplayed()))
+//                .perform(click());
+//
+//        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
+//                isDisplayed()))
+//                .perform(click());
+//
+//        onView(allOf(withId(R.id.form_usuario_nome_editText),
+//                isDisplayed()))
+//                .perform(click(),
+//                        typeText("Felipe"),
+//                        closeSoftKeyboard());
+//
+//        onView(allOf(withId(android.R.id.button1),
+//                withText("Adicionar"),
+//                isDisplayed()))
+//                .perform(scrollTo(), click());
+//
+//        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
+//                isDisplayed()))
+//                .perform(click());
+//
+//        onView(allOf(withId(R.id.form_usuario_nome_editText),
+//                isDisplayed()))
+//                .perform(click(),
+//                        typeText("Evelyn"),
+//                        closeSoftKeyboard());
+//
+//        onView(allOf(withId(android.R.id.button1),
+//                withText("Adicionar"),
+//                isDisplayed()))
+//                .perform(scrollTo(), click());
+//
+//        pressBack();
 
         //Propor 1
-        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.alertTitle),
-                withText("Novo lance"),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(R.id.form_lance_valor_edittext),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("200"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(R.id.form_lance_usuario),
-                isDisplayed()))
-                .perform(click());
-
-        onData(is(new Usuario(1, "Felipe")))
-                .inRoot(isPlatformPopup())
-                .perform(click());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Propor"),
-                isDisplayed()))
-                .perform(click());
+        propoeNovoLance("200", 1, "Felipe");
 
         //Propor 2
-        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.alertTitle),
-                withText("Novo lance"),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(R.id.form_lance_valor_edittext),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("300"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(R.id.form_lance_usuario),
-                isDisplayed()))
-                .perform(click());
-
-        onData(is(new Usuario(2, "Evelyn")))
-                .inRoot(isPlatformPopup())
-                .perform(click());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Propor"),
-                isDisplayed()))
-                .perform(click());
+        propoeNovoLance("300", 2, "Evelyn");
 
         //Propor 3
-        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-                isDisplayed()))
-                .perform(click());
-
-        onView(allOf(withId(R.id.alertTitle),
-                withText("Novo lance"),
-                isDisplayed()))
-                .check(matches(isDisplayed()));
-
-        onView(allOf(withId(R.id.form_lance_valor_edittext),
-                isDisplayed()))
-                .perform(click(),
-                        typeText("400"),
-                        closeSoftKeyboard());
-
-        onView(allOf(withId(R.id.form_lance_usuario),
-                isDisplayed()))
-                .perform(click());
-
-        onData(is(new Usuario(1, "Felipe")))
-                .inRoot(isPlatformPopup())
-                .perform(click());
-
-        onView(allOf(withId(android.R.id.button1),
-                withText("Propor"),
-                isDisplayed()))
-                .perform(click());
+        propoeNovoLance("400", 1, "Felipe");
 
         //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
         FormatadorDeMoeda formatador = new FormatadorDeMoeda();
@@ -300,5 +202,47 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
                                 "200.0 - (1) Felipe\n"),
                         isDisplayed())));
 
+    }
+
+    private void propoeNovoLance(String valor, int idUsuario, String nomeUsuario) {
+        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
+                isDisplayed()))
+                .perform(click());
+
+        onView(allOf(withId(R.id.alertTitle),
+                withText("Novo lance"),
+                isDisplayed()))
+                .check(matches(isDisplayed()));
+
+        onView(allOf(withId(R.id.form_lance_valor_edittext),
+                isDisplayed()))
+                .perform(click(),
+                        typeText(valor),
+                        closeSoftKeyboard());
+
+        onView(allOf(withId(R.id.form_lance_usuario),
+                isDisplayed()))
+                .perform(click());
+
+        onData(is(new Usuario(idUsuario, nomeUsuario)))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+
+        onView(allOf(withId(android.R.id.button1),
+                withText("Propor"),
+                isDisplayed()))
+                .perform(click());
+    }
+
+    private void tentaSalvarUsuariosNoBancoDeDadosLocal(@NonNull Usuario... usuarios) {
+        UsuarioDAO dao = new UsuarioDAO(InstrumentationRegistry.getTargetContext());
+
+        for (Usuario usuario : usuarios) {
+            Usuario usuarioSalvo = dao.salva(usuario);
+
+            if (usuarioSalvo == null) {
+                Assert.fail("Usuario não salvo");
+            }
+        }
     }
 }
