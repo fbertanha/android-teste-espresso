@@ -110,7 +110,7 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
                         isDisplayed())));
 
         onView(withId(R.id.lances_leilao_maiores_lances))
-                .check(matches(allOf(withText("200.0 - (1) Felipe Bertanha\n"),
+                .check(matches(allOf(withText(formatador.formata(200) + " - (1) Felipe Bertanha\n"),
                         isDisplayed())));
 
     }
@@ -126,67 +126,12 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
         onView(withId(R.id.lista_leilao_recyclerview))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-//        onView(allOf(withId(R.id.lances_leilao_fab_adiciona),
-//                isDisplayed()))
-//                .perform(click());
-//
-//        onView(allOf(withId(R.id.alertTitle),
-//                withText("Usuários não encontrados"),
-//                isDisplayed()))
-//                .check(matches(isDisplayed()));
-//
-//        onView(allOf(withId(android.R.id.message),
-//                withText("Não existe usuários cadastrados! Cadastre um usuário para propor o lance."),
-//                isDisplayed()))
-//                .check(matches(isDisplayed()));
-//
-//        onView(allOf(withId(android.R.id.button1),
-//                withText("Cadastrar usuário"),
-//                isDisplayed()))
-//                .perform(click());
-//
-//        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
-//                isDisplayed()))
-//                .perform(click());
-//
-//        onView(allOf(withId(R.id.form_usuario_nome_editText),
-//                isDisplayed()))
-//                .perform(click(),
-//                        typeText("Felipe"),
-//                        closeSoftKeyboard());
-//
-//        onView(allOf(withId(android.R.id.button1),
-//                withText("Adicionar"),
-//                isDisplayed()))
-//                .perform(scrollTo(), click());
-//
-//        onView(allOf(withId(R.id.lista_usuario_fab_adiciona),
-//                isDisplayed()))
-//                .perform(click());
-//
-//        onView(allOf(withId(R.id.form_usuario_nome_editText),
-//                isDisplayed()))
-//                .perform(click(),
-//                        typeText("Evelyn"),
-//                        closeSoftKeyboard());
-//
-//        onView(allOf(withId(android.R.id.button1),
-//                withText("Adicionar"),
-//                isDisplayed()))
-//                .perform(scrollTo(), click());
-//
-//        pressBack();
-
-        //Propor 1
         propoeNovoLance("200", 1, "Felipe");
 
-        //Propor 2
         propoeNovoLance("300", 2, "Evelyn");
 
-        //Propor 3
         propoeNovoLance("400", 1, "Felipe");
 
-        //Fazer assertion para as views de maior e menor lance, e tbm, para os maiores lances
         FormatadorDeMoeda formatador = new FormatadorDeMoeda();
         onView(withId(R.id.lances_leilao_maior_lance))
                 .check(matches(allOf(withText(formatador.formata(400)),
@@ -197,11 +142,38 @@ public class LancesLeilaoTelaTest extends BaseTesteIntegracao {
                         isDisplayed())));
 
         onView(withId(R.id.lances_leilao_maiores_lances))
-                .check(matches(allOf(withText("400.0 - (1) Felipe\n" +
-                                "300.0 - (2) Evelyn\n" +
-                                "200.0 - (1) Felipe\n"),
+                .check(matches(allOf(withText(formatador.formata(400) + " - (1) Felipe\n" +
+                                formatador.formata(300) + " - (2) Evelyn\n" +
+                                formatador.formata(200) + " - (1) Felipe\n"),
                         isDisplayed())));
 
+    }
+
+    @Test
+    public void deve_AtualizarLancesDoLeilao_QuandoReceberUmLanceMuitoAlto() throws IOException {
+        tentaSalvarLeilaoNaApi(new Leilao("Carro"));
+
+        tentaSalvarUsuariosNoBancoDeDadosLocal(new Usuario("Felipe"));
+
+        mainActivity.launchActivity(new Intent());
+
+        onView(withId(R.id.lista_leilao_recyclerview))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
+        propoeNovoLance("2000000000", 1, "Felipe");
+
+        FormatadorDeMoeda formatador = new FormatadorDeMoeda();
+        onView(withId(R.id.lances_leilao_maior_lance))
+                .check(matches(allOf(withText(formatador.formata(2000000000)),
+                        isDisplayed())));
+
+        onView(withId(R.id.lances_leilao_menor_lance))
+                .check(matches(allOf(withText(formatador.formata(2000000000)),
+                        isDisplayed())));
+
+        onView(withId(R.id.lances_leilao_maiores_lances))
+                .check(matches(allOf(withText(formatador.formata(2000000000) + " - (1) Felipe\n"),
+                        isDisplayed())));
     }
 
     private void propoeNovoLance(String valor, int idUsuario, String nomeUsuario) {
